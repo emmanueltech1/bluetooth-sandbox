@@ -15,19 +15,20 @@ def getTemp():
 serverAddress = ("127.0.0.1", 7070);
 
 # Create a datagram socket
-tempSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
+#tempSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
+bleSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
 
 # Get temperature
-temperature = getTemp();
-tempString  = "%.2f"%temperature;
+#temperature = getTemp();
+#tempString  = "%.2f"%temperature;
 
 # Socket is not in connected state yet...sendto() can be used
 # Send temperature to the server
-tempSensorSocket.sendto(tempString.encode(), ("127.0.0.1",7070));
+#tempSensorSocket.sendto(tempString.encode(), ("127.0.0.1",7070));
 
 # Read UDP server's response datagram
-response = tempSensorSocket.recv(1024);
-print(response);
+#response = tempSensorSocket.recv(1024);
+#print(response);
 
 async def run():
     devices = await discover()
@@ -38,6 +39,12 @@ async def run():
             print("metadata-uuids %s" %d.metadata['uuids'])
             print("metadata-manufacturer_data %s" %d.metadata['manufacturer_data'])
             print()
+    formatter = "%s %s %s %s" % (d.address, d.name, d.metadata, d.rssi)
+    bleSensorSocket.sendto(formatter.encode(), ("127.0.0.1",7070));
+    # Read UDP server's response datagram
+    bleResponse = bleSensorSocket.recv(1024);
+    print(bleResponse);
+
 
 while (True):
     print()
