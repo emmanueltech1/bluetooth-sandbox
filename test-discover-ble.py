@@ -5,6 +5,10 @@ from bleak import discover
 import socket
 import random
 
+UDP_IP_ADDRESS = "127.0.0.1"
+UDP_PORT = 12345
+buffer=4096
+
  
 # Get temperature
 def getTemp():
@@ -12,37 +16,40 @@ def getTemp():
     return temp;
 
 # A tuple with server ip and port
-serverAddress = ("127.0.0.1", 7070);
+address = (UDP_IP_ADDRESS ,UDP_PORT)
 
 # Create a datagram socket
 #tempSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
 bleSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
 
 # Get temperature
-#temperature = getTemp();
-#tempString  = "%.2f"%temperature;
+temperature = getTemp();
+tempString  = "%.2f"%temperature;
 
 # Socket is not in connected state yet...sendto() can be used
 # Send temperature to the server
-#tempSensorSocket.sendto(tempString.encode(), ("127.0.0.1",7070));
+bleSensorSocket.sendto(tempString.encode(), address);
 
 # Read UDP server's response datagram
-#response = tempSensorSocket.recv(1024);
-#print(response);
+response = bleSensorSocket.recv(buffer);
+print(response);
 
 async def run():
     devices = await discover()
     for d in devices:
         print(d.address, d.name, d.metadata, d.rssi)
-        if d.name == "Galaxy Watch (8CEB) LE":
+        #if d.name == "Galaxy Watch (8CEB) LE":
+        if d.address == "3A60299C-2686-44B1-8AB2-788A3D6D6E7C":
             print("Galaxy Watch!!!")
-            print("metadata-uuids %s" %d.metadata['uuids'])
+            #print("metadata-uuids %s" %d.metadata['uuids'])
             print("metadata-manufacturer_data %s" %d.metadata['manufacturer_data'])
             print()
-    formatter = "%s %s %s %s" % (d.address, d.name, d.metadata, d.rssi)
-    bleSensorSocket.sendto(formatter.encode(), ("127.0.0.1",7070));
+            formatter = "%s %s %s %s" % (d.address, d.name, d.metadata, d.rssi)
+            bleSensorSocket.sendto(formatter.encode(), address);
+    #formatter = "%s %s %s %s" % (d.address, d.name, d.metadata, d.rssi)
+    #bleSensorSocket.sendto(formatter.encode(), address);
     # Read UDP server's response datagram
-    bleResponse = bleSensorSocket.recv(1024);
+    bleResponse = bleSensorSocket.recv(buffer);
     print(bleResponse);
 
 
