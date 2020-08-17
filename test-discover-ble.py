@@ -38,19 +38,21 @@ async def run():
     devices = await discover()
     for d in devices:
         print(d.address, d.name, d.metadata, d.rssi)
-        #if d.name == "Galaxy Watch (8CEB) LE":
-        if d.address == "3A60299C-2686-44B1-8AB2-788A3D6D6E7C":
+        if d.name == "Galaxy Watch (8CEB) LE":
+        #if d.address == "3A60299C-2686-44B1-8AB2-788A3D6D6E7C":
             print("Galaxy Watch!!!")
             #print("metadata-uuids %s" %d.metadata['uuids'])
             print("metadata-manufacturer_data %s" %d.metadata['manufacturer_data'])
             print()
             formatter = "%s %s %s %s" % (d.address, d.name, d.metadata, d.rssi)
-            bleSensorSocket.sendto(formatter.encode(), address);
+            bleSensorSocket.sendto(formatter.encode(), address)
+            bleResponse = bleSensorSocket.recv(buffer);
+            print(bleResponse);
     #formatter = "%s %s %s %s" % (d.address, d.name, d.metadata, d.rssi)
     #bleSensorSocket.sendto(formatter.encode(), address);
     # Read UDP server's response datagram
-    bleResponse = bleSensorSocket.recv(buffer);
-    print(bleResponse);
+    #bleResponse = bleSensorSocket.recv(buffer);
+    #print(bleResponse);
 
 
 while (True):
